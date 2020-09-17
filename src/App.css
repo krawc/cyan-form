@@ -36,3 +36,33 @@
     transform: rotate(360deg);
   }
 }
+
+
+
+.checkbox-row,
+.rfe-form__row {
+  width: 300px;
+  display: flex;
+  justify-content: space-between;
+  margin: 1em auto;
+}
+
+.rfe-form__row label {
+  flex: 1;
+  text-align: left;
+}
+
+
+.rfe-form__row input + span {
+  width: 20px;
+}
+
+.alpha-picker {
+  width: 300px;
+  margin: 2em auto;
+}
+
+.hue-picker {
+  width: 300px;
+  margin: 2em auto;
+}
