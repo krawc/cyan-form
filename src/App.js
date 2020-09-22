@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import logo from './logo.svg';
 import './App.css';
 import Multistep from 'react-multistep';
@@ -71,7 +71,7 @@ function StepThree(props) {
     <div>
       <p>Please choose a color which you like the most right now.</p>
       <div style={{width: 200, height: 200, margin: "auto", background: props.color && props.color.hex}}/>
-      <HuePicker style={{margin: "2em auto"}} color={ props.color }
+      <HuePicker name="hue" style={{margin: "2em auto"}} color={ props.color }
         onChange={ props.handleColor }/>
     </div>
   )
@@ -82,9 +82,33 @@ function StepFour(props) {
   return (
     <div>
       <p>Please choose a saturation which you like the most right now.</p>
-      <div style={{width: 200, height: 200, margin: "auto", background: props.color && "rgba(" + props.color.rgb.r + "," + props.color.rgb.g + "," + props.color.rgb.b + "," + props.color.rgb.a + ")" }}/>
-      <AlphaPicker style={{margin: "2em auto"}} color={props.color}
-        onChange={ props.handleColor }/>
+      <div style={{width: 200, height: 200, margin: "auto", background: "hsl(" + props.color.hsl.h + "deg," + (props.saturation * 100) + "%," + (props.color.hsl.l  * 100) + "%)" }}/>
+      <input type="range" onChange={(e) => { props.handleColor(e);}} value={props.saturation} name="saturation" min={0} max={1} step={0.01} />
+    </div>
+  )
+}
+
+function StepFive(props) {
+
+  return (
+    <div>
+      <p>Please choose a lightness which you like the most right now.</p>
+      <div style={{width: 200, height: 200, margin: "auto", background: "hsl(" + props.color.hsl.h + "deg," + (props.color.hsl.s  * 100) + "%," + (props.lightness  * 100) + "%)" }}/>
+      <input type="range" onChange={(e) => { props.handleColor(e);}} value={props.lightness} name="lightness" min={0} max={1} step={0.01} />
+    </div>
+  )
+}
+
+
+function StepSix(props) {
+
+  return (
+    <div>
+      <select name="gender" style={{width: 200, padding: 10, marginBottom: 20}}>
+        <option value="trans">Astrogender</option>
+        <option value="trans">Cloudgender</option>
+        <option disabled value="male">Male</option>
+      </select>
     </div>
   )
 }
@@ -93,15 +117,27 @@ function App() {
 
   const [moodsPicked, setMoodsPicked] = useState([]);
   const [color, setColorPicked] = useState();
-  const [alpha, setAlphaPicked] = useState();
+  const [saturation, setSaturation] = useState(1);
+  const [lightness, setLightness] = useState(0.5);
 
   const handleColorChange = (color) => {
     setColorPicked(color);
     console.log(color);
   }
 
-  const handleAlphaChange = (color) => {
-    setAlphaPicked(color);
+  const handleSaturationChange = (e) => {
+    let prevColor = color;
+    prevColor.hsl.s = +e.target.value;
+    setColorPicked(prevColor);
+    setSaturation(+e.target.value);
+  }
+
+
+  const handleLightnessChange = (e) => {
+    let prevColor = color;
+    prevColor.hsl.l = +e.target.value;
+    setColorPicked(prevColor);
+    setLightness(+e.target.value);
     console.log(color);
   }
 
@@ -109,21 +145,29 @@ function App() {
     {name: 'StepOne', component: <StepOne handleMoods={setMoodsPicked} moodsPicked={moodsPicked}/>},
     {name: 'StepTwo', component: <StepTwo moods={moodsPicked}/>},
     {name: 'StepThree', component: <StepThree color={color} handleColor={handleColorChange}/>},
-    {name: 'StepFour', component: <StepFour color={alpha} handleColor={handleAlphaChange}/>}
+    {name: 'StepFour', component: <StepFour color={color} saturation={saturation} handleColor={handleSaturationChange}/>},
+    {name: 'StepFive', component: <StepFive color={color} lightness={lightness} handleColor={handleLightnessChange}/>},
+    {name: 'StepSix', component: <StepSix/>}
+
   ];
+
+
+  const prevStyle = {'background': '#33c3f0', 'border-width': '2px'}
+  const nextStyle = {'background': '#33c3f0',  'border-width': '2px'}
 
   return (
     <div className="App">
-      <Form
+      <form
         name="testForm"
-        onSubmit={data => {
-          console.log(data)
+        onSubmit={(e) => {
+          e.preventDefault();
+          console.log(e)
           // data.myTextBox
           // data.<Name of Element>
         }}
       >
-      <Multistep showNavigation={true} steps={steps}/>
-      </Form>
+      <Multistep prevStyle={prevStyle} nextStyle={nextStyle} showNavigation={true} steps={steps}/>
+      </form>
     </div>
   );
 }
