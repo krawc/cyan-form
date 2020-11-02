@@ -193,7 +193,7 @@ function StepNine (props) {
       <p> If not, please type in a "no"</p>
       <input
       type='text'
-      name='age'
+      name='email'
       value={props.email}
       onChange={ props.handleEmail } />
       <input type="hidden" name="submit" value="true"/>
@@ -313,12 +313,14 @@ function App() {
         <li className={"steps-number " + (step === 9 && "active")}>9</li>
       </ul>
       <form
+      data-netlify="true"
         ref={formInput}
-        name="testForm"
+        name="responses"
         onSubmit={(e) => {
           moveForward();
         }}
       >
+        <input type="hidden" name="form-name" value="responses" />
         <StepOne show={(step === 1)} handleMoods={setMoodsPicked} moodsPicked={moodsPicked}/>
         <StepTwo show={(step === 2)} moods={moodsPicked}/>
         <StepThree show={(step === 3)} color={color} handleColor={handleColorChange}/>
